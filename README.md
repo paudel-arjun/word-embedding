@@ -1,1 +1,1 @@
-Understanding word embedding using [tidytext](https://github.com/juliasilge/tidytext) based on [Text Mining with R](https://www.tidytextmining.com/#welcome-to-text-mining-with-r), [smltar](https://smltar.com/) and [Julia Silge's ppt](https://juliasilge.github.io/why-r-webinar/#1)
+Understanding word embedding using [tidytext](https://github.com/juliasilge/tidytext) based on [Text Mining with R](https://www.tidytextmining.com/#welcome-to-text-mining-with-r), [smltar](https://smltar.com/) and [Julia Silge's ppt](https://juliasilge.github.io/why-r-webinar/#1).
