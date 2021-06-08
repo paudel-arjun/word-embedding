@@ -8,6 +8,7 @@ library(tidyverse)
 library(tidytext)
 library(textdata)
 library(widyr)
+library(irlba)
 ```
 
 ``` r
@@ -191,19 +192,6 @@ class(pmi_matrix)
     ## [1] "dgCMatrix"
     ## attr(,"package")
     ## [1] "Matrix"
-
-``` r
-library(irlba)
-```
-
-    ## Loading required package: Matrix
-
-    ## 
-    ## Attaching package: 'Matrix'
-
-    ## The following objects are masked from 'package:tidyr':
-    ## 
-    ##     expand, pack, unpack
 
 ``` r
 set.seed(13)

@@ -18,6 +18,7 @@ library(tidyverse)
 library(tidytext)
 library(textdata)
 library(widyr)
+library(irlba)
 ```
 
 ```{r}
@@ -128,7 +129,6 @@ pmi_matrix <- tidy_pmi %>%
   cast_sparse(item1, item2, pmi)
 
 class(pmi_matrix)
-library(irlba)
 
 set.seed(13)
 pmi_svd <- irlba(pmi_matrix, nv=5, maxit = 10000)
