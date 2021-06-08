@@ -343,17 +343,17 @@ word_vectors
 
 #### Similarity
 
-Similarity between vector representation of words can be found using cosine similarity.    
+Similarity between vector representation of words can be found using cosine similarity.        
 $sim(x,y) = \frac{x.y}{||x||.||y||}$
 
-$x = (5, 0, 3, 0, 2, 0, 0, 2, 0, 0)$ and  $y = (3, 0, 2, 0, 1, 1, 0, 1, 0, 1)$
-$x.y = x^{t}.y = 5*3+0*0+3*2+0*0+2*1+0*1+0*0+0*1 = 25$ 
-$||x|| = \sqrt{5^2+0^2+3^2+0^2+2^2+0^2+0^2+2^2+0^2+0^2} = 6.48$
-$||y|| = \sqrt{3^2+0^2+2^2+0^2+1^2+1^2+0^2+1^2+0^2+1^2} = 4.12$    
-$sim(x,y) = \frac{25}{6.48*4.12} = 0.94$
+$x = (5, 0, 3, 0, 2, 0, 0, 2, 0, 0)$ and  $y = (3, 0, 2, 0, 1, 1, 0, 1, 0, 1)$     
+$x.y = x^{t}.y = 5*3+0*0+3*2+0*0+2*1+0*1+0*0+0*1 = 25$          
+$||x|| = \sqrt{5^2+0^2+3^2+0^2+2^2+0^2+0^2+2^2+0^2+0^2} = 6.48$         
+$||y|| = \sqrt{3^2+0^2+2^2+0^2+1^2+1^2+0^2+1^2+0^2+1^2} = 4.12$            
+$sim(x,y) = \frac{25}{6.48*4.12} = 0.94$        
 
 
-Some matrix multiplication quirks to understand.
+**Some matrix multiplication quirks to understand.**
 
 Let's create a 2x2 matrix.
 
@@ -413,7 +413,7 @@ a[,1] %>% dim()
 ```
 
 Since the dimension of an vector is NULL it can act as a row vector or column vector.    
-In this case it acts as a 1x2 row vector and so can be multiplied by a 2x2 matrix.
+In this case it acts as a 1x2 row vector and so can be multiplied by a 2x2 matrix.    
 $a^*_{1\times2}*a_{2\times2}$
 
 ```r
@@ -425,7 +425,7 @@ a[1,]%*%a
 ## [1,]    3    6
 ```
 
-Here it acts as 2x1 column vector and can multiply a.    
+Here it acts as 2x1 column vector and can multiply a.         
 $a_{2\times2}*a^*_{2\times1}$
 
 ```r
