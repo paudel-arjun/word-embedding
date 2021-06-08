@@ -609,7 +609,7 @@ tidy_doc_matrix <- tidy_dtm %>% left_join(tidy_embed, by = "word") %>%
   mutate(value = n*value) %>% 
   pivot_wider(names_from = dimension, values_from = value,values_fill = 0) %>% 
   group_by(id) %>% 
-  summarise(across (starts_with("d"), sum))
+  summarise(across (starts_with("d"), sum)) 
 ```
 
 Both results are identical
@@ -631,3 +631,130 @@ tidy_doc_matrix
     ##   <dbl> <dbl> <dbl> <dbl> <dbl>
     ## 1     1   0.2     1   0.5  0.02
     ## 2     2   1.3     9   1.9  1.14
+
+If you want *tidy\_doc\_matrix* in matrix format rather than a tibble,
+use `cast_sparse`.
+
+``` r
+tidy_doc_matrix %>% 
+  pivot_longer(starts_with("d"), names_to = "dimension", values_to = "value") %>% 
+  cast_sparse(id, dimension, value)
+```
+
+    ## 2 x 4 sparse Matrix of class "dgCMatrix"
+    ##    d1 d2  d3   d4
+    ## 1 0.2  1 0.5 0.02
+    ## 2 1.3  9 1.9 1.14
+
+``` r
+doc_matrix
+```
+
+    ##    d1 d2  d3   d4
+    ## 1 0.2  1 0.5 0.02
+    ## 2 1.3  9 1.9 1.14
+
+#### Pretrained word Embedding
+
+We will use `embedding_glove6b()` function from **tidytext** package to
+access to 6B tokens glove embedding from the Stanford NLP Group.
+
+> First time you use this function, you will get a prompt to accpet
+> license and such. It will also take some time to download the dataset
+> of word-vector to your disk. After first use, everytime you use the
+> function, the word-vector dataset will be loaded from disk.
+
+Load 50 dimensional word-vector.
+
+``` r
+glove6b <- textdata::embedding_glove6b(dimensions = 50)
+```
+
+Use `step_word_embedding` from **textrecipes**
+
+``` r
+dt2 <- dt %>% mutate(id = c(1,2,3,4))
+rec_spec <- recipes::recipe(~. , data = dt2) %>% 
+  textrecipes::step_tokenize(text) %>% 
+  textrecipes::step_word_embeddings(text, embeddings = glove6b) %>% 
+  recipes::prep()
+
+dt_baked <- rec_spec %>% recipes::bake(new_data = NULL)
+dt_baked[, 1:6]
+```
+
+    ## # A tibble: 4 x 6
+    ##      id w_embed_sum_d1 w_embed_sum_d2 w_embed_sum_d3 w_embed_sum_d4
+    ##   <dbl>          <dbl>          <dbl>          <dbl>          <dbl>
+    ## 1     1         1.12             1.64         -2.53          0.0525
+    ## 2     2        -0.0176           2.47         -0.459        -0.907 
+    ## 3     3        -0.0384           1.81         -1.48         -0.927 
+    ## 4     4         0.923            3.26         -1.86          0.371 
+    ## # ... with 1 more variable: w_embed_sum_d5 <dbl>
+
+``` r
+tidy_glove <- glove6b %>%
+  pivot_longer(contains("d"),
+               names_to = "dimension") %>%
+  rename(item1 = token)
+
+tidy_dt2 <- dt %>% 
+  mutate(id = c(1,2,3,4)) %>% 
+  unnest_tokens(word, text)
+
+
+word_matrix <- tidy_dt2 %>% 
+  inner_join(by = "word",
+             tidy_glove %>%
+               distinct(item1) %>%
+               rename(word = item1)) %>%
+  count(id, word) %>% 
+  arrange(word) %>% 
+  cast_sparse(id, word, n)
+
+glove_matrix <- tidy_glove %>% 
+  inner_join(by = "item1",
+             tidy_dt2 %>%
+               distinct(word) %>%
+               rename(item1 = word)) %>% 
+  arrange(item1) %>% 
+  cast_sparse(item1, dimension, value)
+
+
+doc_matrix <- word_matrix %*% glove_matrix
+doc_matrix[,1:5] 
+```
+
+    ## 4 x 5 sparse Matrix of class "dgCMatrix"
+    ##            d1       d2        d3        d4      d5
+    ## 1  1.12051000 1.642350 -2.527790  0.052510 3.89353
+    ## 3 -0.03837000 1.811033 -1.480160 -0.927260 4.82670
+    ## 4  0.92253000 3.263501 -1.861858  0.370579 0.63708
+    ## 2 -0.01758149 2.465690 -0.458556 -0.906757 2.60144
+
+> It is extremely important that the order of column in word\_matrix and
+> order of row in glove\_matrix match. If there is a mismatch you will
+> get incorrect result.  
+> In out case this is achieved by sorting dataframe by word/token before
+> casting to sparse matrix.
+
+**Another way of calculating document embedding.**  
+Assuming each word only appears once in a document, we can simply filter
+the gove word-vector dataset to the desired tokens and sum the values
+across each dimension.
+
+``` r
+tok_1 <- c("this","is", "a", "good", "dog")
+tok_2 <- c("who","is", "a", "good","boy")
+tok_3 <- c("boy","it", "sure", "is", "hot", "today", "huh" )
+tok_4 <- c("this", "is", "a", "hot", "summer", "month" )
+glove6b %>% select(token, d1:d5) %>% 
+  filter(token %in% tok_1) %>% 
+  select(where(is.numeric)) %>% 
+  map_df(sum)
+```
+
+    ## # A tibble: 1 x 5
+    ##      d1    d2    d3     d4    d5
+    ##   <dbl> <dbl> <dbl>  <dbl> <dbl>
+    ## 1  1.12  1.64 -2.53 0.0525  3.89
