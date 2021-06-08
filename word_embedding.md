@@ -95,15 +95,15 @@ tidy_pmi
 ## # ... with 24 more rows
 ```
 
-> ***NOTE:*** Notice the use of ***collapse = "id"***
+> Notice the use of `collapse = "id"`
 >
 > Without this, the bigram tokenizer will stop at the end of each row and will not crossover to next row.
 >
-> With ***collapse = "id"*** it will cross over to next row with same id and treat last word of previous row and first word of next row together.
+> With `collapse = "id"` it will cross over to next row with same id and treat last word of previous row and first word of next row together.
 >
-> In our case, row1 and row3 have same ***id***, so we can think of this as one single long sentence that we just chose to represent in two rows. ***collapse = "id"*** will treat it such.
+> In our case, row1 and row3 have same ***id***, so we can think of this as one single long sentence that we just chose to represent in two rows. `collapse = "id"` will treat it such.
 >
-> Sometimes we read a big text file certain number of lines at a time. So all the text of same document can end up in different rows. They will share the same document id but not row number. So using ***collapse = "document_id"*** will treat all those different rows as part of same document.\
+> Sometimes we read a big text file, certain number of lines at a time. So all the text of same document can end up in different rows. They will share the same document id but not row number. Using `collapse = "document_id"` will treat all those different rows as part of same document.
 
 Implementation from [smltar](https://smltar.com/embeddings.html)
 
@@ -153,7 +153,7 @@ tidy_pmi2 <- nested_words %>%
   unite(window_id, id, window_id) %>%
   pairwise_pmi(word, window_id, sort = TRUE)
 
-tidy_pmi
+tidy_pmi2
 ```
 
 ```
@@ -173,6 +173,8 @@ tidy_pmi
 ## # ... with 24 more rows
 ```
 
+PMI calculated by both methods is identical.
+
 
 ```r
 identical(tidy_pmi, tidy_pmi2)
@@ -181,3 +183,157 @@ identical(tidy_pmi, tidy_pmi2)
 ```
 ## [1] TRUE
 ```
+
+### Represent words as numeric vectors
+
+Create 5 dimensional vector using `widely_svd()` from **widyr** package
+
+
+```r
+tidy_word_vectors <- tidy_pmi %>% 
+  widely_svd(
+    item1, item2, pmi,
+    nv = 5, maxit = 10000
+  )
+```
+
+Using `irlba()` from **irlba** library
+
+```r
+pmi_matrix <- tidy_pmi %>% 
+  cast_sparse(item2, item1, pmi)
+
+class(pmi_matrix)
+```
+
+```
+## [1] "dgCMatrix"
+## attr(,"package")
+## [1] "Matrix"
+```
+
+```r
+library(irlba)
+```
+
+```
+## Loading required package: Matrix
+```
+
+```
+## 
+## Attaching package: 'Matrix'
+```
+
+```
+## The following objects are masked from 'package:tidyr':
+## 
+##     expand, pack, unpack
+```
+
+```r
+pmi_svd <- irlba(pmi_matrix, nv = 5, maxit = 10000)
+pmi_svd
+```
+
+```
+## $d
+## [1] 2.731022 2.729388 2.351375 2.134447 2.031151
+## 
+## $u
+##               [,1]          [,2]          [,3]        [,4]         [,5]
+##  [1,]  0.496906697  0.4976166154 -6.983185e-01  0.02425427  0.007214136
+##  [2,]  0.427830391 -0.4286980821 -1.111362e-01  0.02671928 -0.008351493
+##  [3,]  0.496906697  0.4976166154  6.983185e-01  0.02425427  0.007214136
+##  [4,]  0.427830391 -0.4286980821  1.111362e-01  0.02671928 -0.008351493
+##  [5,] -0.013734491 -0.0060186571  7.346907e-16  0.58136797  0.655402784
+##  [6,] -0.015612240  0.0103428563  2.548613e-15  0.47005832 -0.542474331
+##  [7,] -0.073041509 -0.0671095958 -2.526290e-16  0.14442533  0.055306737
+##  [8,] -0.009407261  0.0027007791  1.670296e-15  0.22519094 -0.056061119
+##  [9,] -0.007579327 -0.0006898637  8.144483e-16  0.31800405  0.239164495
+## [10,] -0.012041000 -0.0007497449  2.319832e-15  0.47813140 -0.447294724
+## [11,]  0.363775941 -0.3628283934 -1.414168e-15 -0.01145767  0.005164850
+## [12,] -0.025811206  0.0237291983 -3.878466e-17  0.06530127 -0.026278443
+## [13,] -0.017434323  0.0139134335  5.782971e-16  0.16322377  0.107999213
+## [14,] -0.026987119 -0.0116183619  3.145409e-17  0.07815816  0.008380762
+## 
+## $v
+##               [,1]          [,2]          [,3]        [,4]         [,5]
+##  [1,]  0.427830391  0.4286980821 -6.983185e-01  0.02671928  0.008351493
+##  [2,]  0.496906697 -0.4976166154 -1.111362e-01  0.02425427 -0.007214136
+##  [3,]  0.427830391  0.4286980821  6.983185e-01  0.02671928  0.008351493
+##  [4,]  0.496906697 -0.4976166154  1.111362e-01  0.02425427 -0.007214136
+##  [5,] -0.015612240 -0.0103428563  1.144888e-15  0.47005832  0.542474331
+##  [6,] -0.013734491  0.0060186571  3.409270e-15  0.58136797 -0.655402784
+##  [7,] -0.025811206 -0.0237291983 -1.154759e-16  0.06530127  0.026278443
+##  [8,] -0.007579327  0.0006898637  1.887652e-15  0.31800405 -0.239164495
+##  [9,] -0.009407261 -0.0027007791  6.860780e-16  0.22519094  0.056061119
+## [10,] -0.012041000  0.0007497449  1.190597e-15  0.47813140  0.447294724
+## [11,]  0.363775941  0.3628283934  3.561506e-16 -0.01145767 -0.005164850
+## [12,] -0.073041509  0.0671095958  7.652825e-16  0.14442533 -0.055306737
+## [13,] -0.017434323 -0.0139134335  1.035923e-15  0.16322377 -0.107999213
+## [14,] -0.026987119  0.0116183619  6.561192e-16  0.07815816 -0.008380762
+## 
+## $iter
+## [1] 2
+## 
+## $mprod
+## [1] 38
+```
+
+```r
+word_vectors <- pmi_svd$u
+rownames(word_vectors) <- rownames(pmi_matrix)
+```
+
+Values are almost identical except for third dimension. Not sure if this is rounding error or if these two libraries differ how they implement SVD.
+> Actually looking at source code of `widely_svd()`, it calls `irba()`.
+
+
+
+```r
+word_vectors
+```
+
+```
+##                [,1]          [,2]          [,3]        [,4]         [,5]
+## today   0.496906697  0.4976166154 -6.983185e-01  0.02425427  0.007214136
+## huh     0.427830391 -0.4286980821 -1.111362e-01  0.02671928 -0.008351493
+## summer  0.496906697  0.4976166154  6.983185e-01  0.02425427  0.007214136
+## month   0.427830391 -0.4286980821  1.111362e-01  0.02671928 -0.008351493
+## it     -0.013734491 -0.0060186571  7.346907e-16  0.58136797  0.655402784
+## sure   -0.015612240  0.0103428563  2.548613e-15  0.47005832 -0.542474331
+## is     -0.073041509 -0.0671095958 -2.526290e-16  0.14442533  0.055306737
+## good   -0.009407261  0.0027007791  1.670296e-15  0.22519094 -0.056061119
+## dog    -0.007579327 -0.0006898637  8.144483e-16  0.31800405  0.239164495
+## boy    -0.012041000 -0.0007497449  2.319832e-15  0.47813140 -0.447294724
+## hot     0.363775941 -0.3628283934 -1.414168e-15 -0.01145767  0.005164850
+## who    -0.025811206  0.0237291983 -3.878466e-17  0.06530127 -0.026278443
+## this   -0.017434323  0.0139134335  5.782971e-16  0.16322377  0.107999213
+## a      -0.026987119 -0.0116183619  3.145409e-17  0.07815816  0.008380762
+```
+
+```r
+(tidy_word_vectors %>% cast_sparse(item1, dimension, value))
+```
+
+```
+## 14 x 5 sparse Matrix of class "dgCMatrix"
+##                   1             2             3           4            5
+## huh     0.427830391 -0.4286980821 -2.594116e-01 -0.02671928  0.008351493
+## today   0.496906697  0.4976166154  6.578036e-01 -0.02425427 -0.007214136
+## month   0.427830391 -0.4286980821  2.594116e-01 -0.02671928  0.008351493
+## summer  0.496906697  0.4976166154 -6.578036e-01 -0.02425427 -0.007214136
+## sure   -0.015612240  0.0103428563  1.435348e-15 -0.47005832  0.542474331
+## it     -0.013734491 -0.0060186571 -3.786094e-15 -0.58136797 -0.655402784
+## who    -0.025811206  0.0237291983 -6.667987e-16 -0.06530127  0.026278443
+## dog    -0.007579327 -0.0006898637 -8.214178e-17 -0.31800405 -0.239164495
+## good   -0.009407261  0.0027007791 -1.943537e-15 -0.22519094  0.056061119
+## boy    -0.012041000 -0.0007497449  5.048537e-16 -0.47813140  0.447294724
+## hot     0.363775941 -0.3628283934  3.468048e-16  0.01145767 -0.005164850
+## is     -0.073041509 -0.0671095958  8.865709e-16 -0.14442533 -0.055306737
+## this   -0.017434323  0.0139134335 -5.826402e-16 -0.16322377 -0.107999213
+## a      -0.026987119 -0.0116183619 -5.324994e-16 -0.07815816 -0.008380762
+```
+
+
