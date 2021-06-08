@@ -147,7 +147,11 @@ Values are almost identical except for third dimension. Not sure if this is roun
 
 ```{r}
 word_vectors
-(tidy_word_vectors %>% cast_sparse(item1, dimension, value))
+tidy_word_vectors %>% cast_sparse(item1, dimension, value)
+```
+
+```{r}
+word_vectors == tidy_word_vectors %>% cast_sparse(item1, dimension, value) 
 ```
 
 #### Similarity

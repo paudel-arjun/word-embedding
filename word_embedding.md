@@ -279,7 +279,7 @@ word_vectors
     ## a      -0.026987119 -0.0116183619 -4.007035e-16 -0.07815816 -0.008380762
 
 ``` r
-(tidy_word_vectors %>% cast_sparse(item1, dimension, value))
+tidy_word_vectors %>% cast_sparse(item1, dimension, value)
 ```
 
     ## 14 x 5 sparse Matrix of class "dgCMatrix"
@@ -298,6 +298,27 @@ word_vectors
     ## is     -0.073041509 -0.0671095958  7.300637e-16 -0.14442533 -0.055306737
     ## this   -0.017434323  0.0139134335 -2.400901e-15 -0.16322377 -0.107999213
     ## a      -0.026987119 -0.0116183619 -4.007035e-16 -0.07815816 -0.008380762
+
+``` r
+word_vectors == tidy_word_vectors %>% cast_sparse(item1, dimension, value) 
+```
+
+    ## 14 x 5 Matrix of class "lgeMatrix"
+    ##        [,1] [,2] [,3] [,4] [,5]
+    ## huh    TRUE TRUE TRUE TRUE TRUE
+    ## today  TRUE TRUE TRUE TRUE TRUE
+    ## month  TRUE TRUE TRUE TRUE TRUE
+    ## summer TRUE TRUE TRUE TRUE TRUE
+    ## sure   TRUE TRUE TRUE TRUE TRUE
+    ## it     TRUE TRUE TRUE TRUE TRUE
+    ## who    TRUE TRUE TRUE TRUE TRUE
+    ## dog    TRUE TRUE TRUE TRUE TRUE
+    ## good   TRUE TRUE TRUE TRUE TRUE
+    ## boy    TRUE TRUE TRUE TRUE TRUE
+    ## hot    TRUE TRUE TRUE TRUE TRUE
+    ## is     TRUE TRUE TRUE TRUE TRUE
+    ## this   TRUE TRUE TRUE TRUE TRUE
+    ## a      TRUE TRUE TRUE TRUE TRUE
 
 #### Similarity
 
