@@ -55,7 +55,8 @@ tidy_dt
     ## 10     1 hot  
     ## # ... with 13 more rows
 
-We also create bi-grams and calculate
+We also create bi-grams and calculate pointwise mutual information(pmi)
+using `pairwise_pmi()` from **widyr** package.
 
 ``` r
 tidy_ngram_dt <- dt %>% 
@@ -102,7 +103,8 @@ tidy_pmi
 > `collapse = "document_id"` will treat all those different rows as part
 > of same document.
 
-Implementation from [smltar](https://smltar.com/embeddings.html)
+Implementation from [smltar](https://smltar.com/embeddings.html)  
+The only difference is how the skipgrams are calculated.
 
 ``` r
 nested_words <- tidy_dt %>%
@@ -217,6 +219,14 @@ Both of these results match with what we got from `pairwise_pmi()`.
 
 ### Represent words as numeric vectors
 
+Now we have a very high dimensional word-word matrix with associated pmi
+values. We can reduce the dimension of this matrix using single value
+decomposition.
+
+> Really good [youtube
+> video](https://www.youtube.com/watch?v=DG7YTlGnCEo) explaining SVD and
+> its application in image compression.
+
 Create 5 dimensional vector using `widely_svd()` from **widyr** package
 
 ``` r
@@ -228,7 +238,7 @@ tidy_word_vectors <- tidy_pmi %>%
   )
 ```
 
-Using `irlba()` from **irlba** library
+We can try to recreate this using `irlba()` from **irlba** library
 
 ``` r
 pmi_matrix <- tidy_pmi %>% 
@@ -295,16 +305,7 @@ word_vectors <- pmi_svd$u
 rownames(word_vectors) <- rownames(pmi_matrix)
 ```
 
-Values are almost identical except for third dimension. Not sure if this
-is rounding error or if these two libraries differ how they implement
-SVD. There are also some sign inconsistencies.
-
-> Actually looking at source code of `widely_svd()`, it calls `irba()`.
-> Not really sure what is causing the discrepancy.
-
-> Realized that the inconistencies were due to random nature of the
-> process. Both svd processes resulted in identical result after setting
-> same seed before function calls.
+Comparing results obtained from `widely_svd()` and `irlba()`.
 
 ``` r
 word_vectors
@@ -367,6 +368,21 @@ word_vectors == tidy_word_vectors %>% cast_sparse(item1, dimension, value)
     ## is     TRUE TRUE TRUE TRUE TRUE
     ## this   TRUE TRUE TRUE TRUE TRUE
     ## a      TRUE TRUE TRUE TRUE TRUE
+
+> Initially i got similar but not exact same results from the two
+> methods above. Third dimension in particular was very different and
+> there were some sign discrepencies. I was not sure if this was due to
+> rounding error (values in 3rd dimensions are really small – at the
+> order of
+> ![10^-01 - 10^-16](https://latex.codecogs.com/png.latex?10%5E-01%20-%2010%5E-16 "10^-01 - 10^-16"))
+> or different implementation of SVD.
+
+> Looking at source code of `widely_svd()`, i found that it calls
+> `irba()`, so I was really confused why i was not getting same results.
+
+> Later realized that the inconistencies were due to random nature of
+> the process. Both svd processes resulted in identical result after
+> setting same seed before function calls.
 
 #### Similarity
 
@@ -473,7 +489,7 @@ nearest_neighbors <- function(df, token) {
 }
 ```
 
-Implementation from the book
+Implementation from the book.
 
 ``` r
 nearest_neighbors2 <- function(df, token) {
@@ -550,7 +566,7 @@ document or average them or take the min/max across each dimension.
 We need a matrix of *document\_id*, *words* and the count of how many
 times that word appears in that document.
 
-Document-term matrix
+Document-term(word) matrix
 
 ``` r
 tidy_dt %>% head()
@@ -611,6 +627,8 @@ embedding_matrix
     ## this   -0.017434323  0.0139134335 -2.400901e-15 -0.16322377 -0.107999213
     ## a      -0.026987119 -0.0116183619 -4.007035e-16 -0.07815816 -0.008380762
 
+Document matrix
+
 ``` r
 doc_term_matrix %*% embedding_matrix 
 ```
@@ -619,6 +637,10 @@ doc_term_matrix %*% embedding_matrix
     ##          1          2             3         4         5
     ## 1 2.103253 -0.1719476 -1.074104e-15 -2.293845 0.2009296
     ## 2 1.652736  0.1300741  1.320659e+00 -1.566547 0.8729139
+
+**Manually calculating document matrix**
+
+Using matrix multiplication
 
 ``` r
 test_dtm <- matrix(c(1,2,0,2,0,1), nrow = 2)
@@ -748,6 +770,8 @@ dt_baked[, 1:6]
     ## 3     3        -0.0384           1.81         -1.48         -0.927 
     ## 4     4         0.923            3.26         -1.86          0.371 
     ## # ... with 1 more variable: w_embed_sum_d5 <dbl>
+
+**Manual steps**
 
 ``` r
 tidy_glove <- glove6b %>%

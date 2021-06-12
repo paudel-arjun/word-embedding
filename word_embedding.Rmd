@@ -40,7 +40,7 @@ tidy_dt <- dt %>%
 tidy_dt
 ```
 
-We also create bi-grams and calculate 
+We also create bi-grams and calculate pointwise mutual information(pmi) using `pairwise_pmi()` from **widyr** package.
 ```{r}
 tidy_ngram_dt <- dt %>% 
   unnest_tokens(words, text, token = "ngrams", n = 2, collapse = "id") %>% 
@@ -63,7 +63,8 @@ tidy_pmi
 >
 > Sometimes we read a big text file, certain number of lines at a time. So all the text of same document can end up in different rows. They will share the same document id but not row number. Using `collapse = "document_id"` will treat all those different rows as part of same document.
 
-Implementation from [smltar](https://smltar.com/embeddings.html)
+Implementation from [smltar](https://smltar.com/embeddings.html)    
+The only difference is how the skipgrams are calculated.
 
 ```{r}
 
@@ -134,7 +135,10 @@ There are total 5 tokens. "ab" appears in 1 token. "a" appears in 3 tokens and "
 $I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}*\frac{2}{5}}) =$ `r log((1/5)/((3/5)*(3/5)))`    
 Both of these results match with what we got from `pairwise_pmi()`.
 
-### Represent words as numeric vectors
+### Represent words as numeric vectors    
+Now we have a very high dimensional word-word matrix with associated pmi values. We can reduce the dimension of this matrix using single value decomposition.    
+
+> Really good [youtube video](https://www.youtube.com/watch?v=DG7YTlGnCEo) explaining SVD and its application in image compression.
 
 Create 5 dimensional vector using `widely_svd()` from **widyr** package
 
@@ -147,7 +151,7 @@ tidy_word_vectors <- tidy_pmi %>%
   )
 ```
 
-Using `irlba()` from **irlba** library
+We can try to recreate this using `irlba()` from **irlba** library
 
 ```{r}
 pmi_matrix <- tidy_pmi %>% 
@@ -164,12 +168,7 @@ rownames(word_vectors) <- rownames(pmi_matrix)
 
 ```
 
-Values are almost identical except for third dimension. Not sure if this is rounding error or if these two libraries differ how they implement SVD.  There are also some sign inconsistencies.
-
-> Actually looking at source code of `widely_svd()`, it calls `irba()`. Not really sure what is causing the discrepancy.
-
-> Realized that the inconistencies were due to random nature of the process. Both svd processes resulted in identical result after setting same seed before function calls.
-
+Comparing results obtained from `widely_svd()` and `irlba()`.
 ```{r}
 word_vectors
 tidy_word_vectors %>% cast_sparse(item1, dimension, value)
@@ -178,6 +177,12 @@ tidy_word_vectors %>% cast_sparse(item1, dimension, value)
 ```{r}
 word_vectors == tidy_word_vectors %>% cast_sparse(item1, dimension, value) 
 ```
+
+>Initially i got similar but not exact same results from the two methods above. Third dimension in particular was very different and there were some sign discrepencies. I was not sure if this was due to rounding error (values in 3rd dimensions are really small -- at the order of $10^-01 - 10^-16$) or different implementation of SVD.
+
+> Looking at source code of `widely_svd()`, i found that it calls `irba()`, so I was really confused why i was not getting same results.
+
+> Later realized that the inconistencies were due to random nature of the process. Both svd processes resulted in identical result after setting same seed before function calls.
 
 #### Similarity
 
@@ -243,7 +248,7 @@ nearest_neighbors <- function(df, token) {
 }
 ```
 
-Implementation from the book
+Implementation from the book.
 ```{r}
 nearest_neighbors2 <- function(df, token) {
   df %>%
@@ -274,7 +279,7 @@ One common approach is to aggregate the word vectors of all the words that make 
 
 We need a matrix of *document_id*, *words* and the count of how many times that word appears in that document.
 
-Document-term matrix
+Document-term(word) matrix
 ```{r}
 tidy_dt %>% head()
 doc_term_matrix <- tidy_dt %>% 
@@ -290,11 +295,14 @@ embedding_matrix <- tidy_word_vectors %>%
 embedding_matrix
 ```
 
-
+Document matrix
 ```{r}
 doc_term_matrix %*% embedding_matrix 
 ```
 
+**Manually calculating document matrix**     
+
+Using matrix multiplication
 ```{r}
 test_dtm <- matrix(c(1,2,0,2,0,1), nrow = 2)
 dimnames(test_dtm) <- list(c(1,2), c("the", "good", "boy"))
@@ -369,6 +377,7 @@ dt_baked[, 1:6]
 
 ```
 
+**Manual steps**
 ```{r}
 tidy_glove <- glove6b %>%
   pivot_longer(contains("d"),
