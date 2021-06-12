@@ -30,6 +30,10 @@ dt
     ## 3     2 Who is a good boy              
     ## 4     2 This is a hot summer month
 
+We first tokenize the text and format it in a tidy fashion, i.e. one
+token per row.  
+`unnest_tokens` from **tidytext** is the go to function for this.
+
 ``` r
 tidy_dt <- dt %>% 
   unnest_tokens(word, text)
@@ -50,6 +54,8 @@ tidy_dt
     ##  9     1 is   
     ## 10     1 hot  
     ## # ... with 13 more rows
+
+We also create bi-grams and calculate
 
 ``` r
 tidy_ngram_dt <- dt %>% 
@@ -166,6 +172,48 @@ identical(tidy_pmi, tidy_pmi2)
 ```
 
     ## [1] TRUE
+
+**Manually calculating PMI**
+
+There seems to be different definition and methods of calculating PMI. I
+found this
+[paper](https://proceedings.neurips.cc/paper/2009/file/185c29dc24325934ee377cfda20e414c-Paper.pdf)
+which shows how PMI is calculated and `pairwise_pmi` from **widyr**
+seems to follow this method.  
+We will manually calculate pmi and compare that to `pairwise_pmi`.
+
+``` r
+dat <- tibble(group = rep(1:5, each = 2),
+              letter = c("a", "b",
+                         "a", "c",
+                         "a", "c",
+                         "b", "e",
+                         "b", "f"))
+dat %>% pairwise_pmi(letter, group)
+```
+
+    ## # A tibble: 8 x 3
+    ##   item1 item2    pmi
+    ##   <chr> <chr>  <dbl>
+    ## 1 b     a     -0.588
+    ## 2 c     a      0.511
+    ## 3 a     b     -0.588
+    ## 4 e     b      0.511
+    ## 5 f     b      0.511
+    ## 6 a     c      0.511
+    ## 7 b     e      0.511
+    ## 8 b     f      0.511
+
+There are 5 total tokens, out of that “ac” shows up on two tokens. “a
+shows up on 3 tokens and”c shows up on 2 tokens. So  
+![I(a,c) = log(\\frac{2/5}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B2%2F5%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{2/5}{\frac{3}{5}*\frac{2}{5}}) =")
+0.5108256
+
+There are total 5 tokens. “ab” appears in 1 token. “a” appears in 3
+tokens and “b” appears in 3 tokens.
+![I(a,c) = log(\\frac{1/5}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B1%2F5%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{1/5}{\frac{3}{5}*\frac{2}{5}}) =")
+-0.5877867  
+Both of these results match with what we got from `pairwise_pmi()`.
 
 ### Represent words as numeric vectors
 
