@@ -205,13 +205,13 @@ dat %>% pairwise_pmi(letter, group)
     ## 8 b     f      0.511
 
 There are 5 total tokens, out of that “ac” shows up on two tokens. “a
-shows up on 3 tokens and”c shows up on 2 tokens. So  
-![I(a,c) = log(\\frac{2/5}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B2%2F5%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{2/5}{\frac{3}{5}*\frac{2}{5}}) =")
+shows up on 3 tokens and”c shows up on 2 tokens. So,  
+![I(a,c) = log(\\frac{\\frac{2}{5}}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B%5Cfrac%7B2%7D%7B5%7D%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{\frac{2}{5}}{\frac{3}{5}*\frac{2}{5}}) =")
 0.5108256
 
 There are total 5 tokens. “ab” appears in 1 token. “a” appears in 3
-tokens and “b” appears in 3 tokens.
-![I(a,c) = log(\\frac{1/5}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B1%2F5%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{1/5}{\frac{3}{5}*\frac{2}{5}}) =")
+tokens and “b” appears in 3 tokens.  
+![I(a,c) = log(\\frac{\\frac{1}{5}}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B%5Cfrac%7B1%7D%7B5%7D%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}*\frac{2}{5}}) =")
 -0.5877867  
 Both of these results match with what we got from `pairwise_pmi()`.
 

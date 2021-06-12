@@ -127,11 +127,11 @@ dat <- tibble(group = rep(1:5, each = 2),
 dat %>% pairwise_pmi(letter, group)
 
 ```
-There are 5 total tokens, out of that "ac" shows up on two tokens. "a shows up on 3 tokens and "c shows up on 2 tokens. So    
-$I(a,c) = log(\frac{2/5}{\frac{3}{5}*\frac{2}{5}}) =$ `r log((2/5)/((3/5)*(2/5)))`    
+There are 5 total tokens, out of that "ac" shows up on two tokens. "a shows up on 3 tokens and "c shows up on 2 tokens. So,        
+$I(a,c) = log(\frac{\frac{2}{5}}{\frac{3}{5}*\frac{2}{5}}) =$ `r log((2/5)/((3/5)*(2/5)))`    
 
-There are total 5 tokens. "ab" appears in 1 token. "a" appears in 3 tokens and "b" appears in 3 tokens.
-$I(a,c) = log(\frac{1/5}{\frac{3}{5}*\frac{2}{5}}) =$ `r log((1/5)/((3/5)*(3/5)))`    
+There are total 5 tokens. "ab" appears in 1 token. "a" appears in 3 tokens and "b" appears in 3 tokens.        
+$I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}*\frac{2}{5}}) =$ `r log((1/5)/((3/5)*(3/5)))`    
 Both of these results match with what we got from `pairwise_pmi()`.
 
 ### Represent words as numeric vectors
