@@ -22,7 +22,7 @@ dt <- dt %>% arrange(id)
 dt
 ```
 
-    ## # A tibble: 4 x 2
+    ## # A tibble: 4 × 2
     ##      id text                           
     ##   <dbl> <chr>                          
     ## 1     1 This is a good dog             
@@ -40,7 +40,7 @@ tidy_dt <- dt %>%
 tidy_dt
 ```
 
-    ## # A tibble: 23 x 2
+    ## # A tibble: 23 × 2
     ##       id word 
     ##    <dbl> <chr>
     ##  1     1 this 
@@ -53,7 +53,7 @@ tidy_dt
     ##  8     1 sure 
     ##  9     1 is   
     ## 10     1 hot  
-    ## # ... with 13 more rows
+    ## # … with 13 more rows
 
 We also create bi-grams and calculate pointwise mutual information(pmi)
 using `pairwise_pmi()` from **widyr** package.
@@ -70,7 +70,7 @@ tidy_pmi <- tidy_ngram_dt %>%
 tidy_pmi
 ```
 
-    ## # A tibble: 34 x 3
+    ## # A tibble: 34 × 3
     ##    item1  item2    pmi
     ##    <chr>  <chr>  <dbl>
     ##  1 huh    today  2.35 
@@ -83,7 +83,7 @@ tidy_pmi
     ##  8 dog    good   0.965
     ##  9 good   dog    0.965
     ## 10 boy    dog    0.965
-    ## # ... with 24 more rows
+    ## # … with 24 more rows
 
 > Notice the use of `collapse = "id"`
 >
@@ -113,11 +113,11 @@ nested_words <- tidy_dt %>%
 nested_words
 ```
 
-    ## # A tibble: 2 x 2
+    ## # A tibble: 2 × 2
     ##      id words            
     ##   <dbl> <list>           
-    ## 1     1 <tibble [12 x 1]>
-    ## 2     2 <tibble [11 x 1]>
+    ## 1     1 <tibble [12 × 1]>
+    ## 2     2 <tibble [11 × 1]>
 
 ``` r
 slide_windows <- function(tbl, window_size) {
@@ -152,7 +152,7 @@ tidy_pmi2 <- nested_words %>%
 tidy_pmi2
 ```
 
-    ## # A tibble: 34 x 3
+    ## # A tibble: 34 × 3
     ##    item1  item2    pmi
     ##    <chr>  <chr>  <dbl>
     ##  1 huh    today  2.35 
@@ -165,7 +165,7 @@ tidy_pmi2
     ##  8 dog    good   0.965
     ##  9 good   dog    0.965
     ## 10 boy    dog    0.965
-    ## # ... with 24 more rows
+    ## # … with 24 more rows
 
 PMI calculated by both methods is identical.
 
@@ -194,7 +194,7 @@ dat <- tibble(group = rep(1:5, each = 2),
 dat %>% pairwise_pmi(letter, group)
 ```
 
-    ## # A tibble: 8 x 3
+    ## # A tibble: 8 × 3
     ##   item1 item2    pmi
     ##   <chr> <chr>  <dbl>
     ## 1 b     a     -0.588
@@ -208,12 +208,12 @@ dat %>% pairwise_pmi(letter, group)
 
 There are 5 total tokens, out of that “ac” shows up on two tokens. “a
 shows up on 3 tokens and”c shows up on 2 tokens. So,  
-![I(a,c) = log(\\frac{\\frac{2}{5}}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B%5Cfrac%7B2%7D%7B5%7D%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{\frac{2}{5}}{\frac{3}{5}*\frac{2}{5}}) =")
+![I(a,c) = log(\frac{\frac{2}{5}}{\frac{3}{5}\*\frac{2}{5}}) =](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B%5Cfrac%7B2%7D%7B5%7D%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{\frac{2}{5}}{\frac{3}{5}*\frac{2}{5}}) =")
 0.5108256
 
 There are total 5 tokens. “ab” appears in 1 token. “a” appears in 3
 tokens and “b” appears in 3 tokens.  
-![I(a,c) = log(\\frac{\\frac{1}{5}}{\\frac{3}{5}\*\\frac{2}{5}}) =](https://latex.codecogs.com/png.latex?I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B%5Cfrac%7B1%7D%7B5%7D%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B2%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}*\frac{2}{5}}) =")
+![I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}\*\frac{3}{5}}) =](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;I%28a%2Cc%29%20%3D%20log%28%5Cfrac%7B%5Cfrac%7B1%7D%7B5%7D%7D%7B%5Cfrac%7B3%7D%7B5%7D%2A%5Cfrac%7B3%7D%7B5%7D%7D%29%20%3D "I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}*\frac{3}{5}}) =")
 -0.5877867  
 Both of these results match with what we got from `pairwise_pmi()`.
 
@@ -374,7 +374,7 @@ word_vectors == tidy_word_vectors %>% cast_sparse(item1, dimension, value)
 > there were some sign discrepencies. I was not sure if this was due to
 > rounding error (values in 3rd dimensions are really small – at the
 > order of
-> ![10^-01 - 10^-16](https://latex.codecogs.com/png.latex?10%5E-01%20-%2010%5E-16 "10^-01 - 10^-16"))
+> ![10^-01 - 10^-16](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;10%5E-01%20-%2010%5E-16 "10^-01 - 10^-16"))
 > or different implementation of SVD.
 
 > Looking at source code of `widely_svd()`, i found that it calls
@@ -388,15 +388,15 @@ word_vectors == tidy_word_vectors %>% cast_sparse(item1, dimension, value)
 
 Similarity between vector representation of words can be found using
 cosine similarity.  
-![sim(x,y) = \\frac{x.y}{\|\|x\|\|.\|\|y\|\|}](https://latex.codecogs.com/png.latex?sim%28x%2Cy%29%20%3D%20%5Cfrac%7Bx.y%7D%7B%7C%7Cx%7C%7C.%7C%7Cy%7C%7C%7D "sim(x,y) = \frac{x.y}{||x||.||y||}")
+![sim(x,y) = \frac{x.y}{\|\|x\|\|.\|\|y\|\|}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;sim%28x%2Cy%29%20%3D%20%5Cfrac%7Bx.y%7D%7B%7C%7Cx%7C%7C.%7C%7Cy%7C%7C%7D "sim(x,y) = \frac{x.y}{||x||.||y||}")
 
-![x = (5, 0, 3, 0, 2, 0, 0, 2, 0, 0)](https://latex.codecogs.com/png.latex?x%20%3D%20%285%2C%200%2C%203%2C%200%2C%202%2C%200%2C%200%2C%202%2C%200%2C%200%29 "x = (5, 0, 3, 0, 2, 0, 0, 2, 0, 0)")
+![x = (5, 0, 3, 0, 2, 0, 0, 2, 0, 0)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x%20%3D%20%285%2C%200%2C%203%2C%200%2C%202%2C%200%2C%200%2C%202%2C%200%2C%200%29 "x = (5, 0, 3, 0, 2, 0, 0, 2, 0, 0)")
 and
-![y = (3, 0, 2, 0, 1, 1, 0, 1, 0, 1)](https://latex.codecogs.com/png.latex?y%20%3D%20%283%2C%200%2C%202%2C%200%2C%201%2C%201%2C%200%2C%201%2C%200%2C%201%29 "y = (3, 0, 2, 0, 1, 1, 0, 1, 0, 1)")  
-![x.y = x^{t}.y = 5\*3+0\*0+3\*2+0\*0+2\*1+0\*1+0\*0+0\*1 = 25](https://latex.codecogs.com/png.latex?x.y%20%3D%20x%5E%7Bt%7D.y%20%3D%205%2A3%2B0%2A0%2B3%2A2%2B0%2A0%2B2%2A1%2B0%2A1%2B0%2A0%2B0%2A1%20%3D%2025 "x.y = x^{t}.y = 5*3+0*0+3*2+0*0+2*1+0*1+0*0+0*1 = 25")  
-![\|\|x\|\| = \\sqrt{5^2+0^2+3^2+0^2+2^2+0^2+0^2+2^2+0^2+0^2} = 6.48](https://latex.codecogs.com/png.latex?%7C%7Cx%7C%7C%20%3D%20%5Csqrt%7B5%5E2%2B0%5E2%2B3%5E2%2B0%5E2%2B2%5E2%2B0%5E2%2B0%5E2%2B2%5E2%2B0%5E2%2B0%5E2%7D%20%3D%206.48 "||x|| = \sqrt{5^2+0^2+3^2+0^2+2^2+0^2+0^2+2^2+0^2+0^2} = 6.48")  
-![\|\|y\|\| = \\sqrt{3^2+0^2+2^2+0^2+1^2+1^2+0^2+1^2+0^2+1^2} = 4.12](https://latex.codecogs.com/png.latex?%7C%7Cy%7C%7C%20%3D%20%5Csqrt%7B3%5E2%2B0%5E2%2B2%5E2%2B0%5E2%2B1%5E2%2B1%5E2%2B0%5E2%2B1%5E2%2B0%5E2%2B1%5E2%7D%20%3D%204.12 "||y|| = \sqrt{3^2+0^2+2^2+0^2+1^2+1^2+0^2+1^2+0^2+1^2} = 4.12")  
-![sim(x,y) = \\frac{25}{6.48\*4.12} = 0.94](https://latex.codecogs.com/png.latex?sim%28x%2Cy%29%20%3D%20%5Cfrac%7B25%7D%7B6.48%2A4.12%7D%20%3D%200.94 "sim(x,y) = \frac{25}{6.48*4.12} = 0.94")
+![y = (3, 0, 2, 0, 1, 1, 0, 1, 0, 1)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;y%20%3D%20%283%2C%200%2C%202%2C%200%2C%201%2C%201%2C%200%2C%201%2C%200%2C%201%29 "y = (3, 0, 2, 0, 1, 1, 0, 1, 0, 1)")  
+![x.y = x^{t}.y = 5\*3+0\*0+3\*2+0\*0+2\*1+0\*1+0\*0+0\*1 = 25](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x.y%20%3D%20x%5E%7Bt%7D.y%20%3D%205%2A3%2B0%2A0%2B3%2A2%2B0%2A0%2B2%2A1%2B0%2A1%2B0%2A0%2B0%2A1%20%3D%2025 "x.y = x^{t}.y = 5*3+0*0+3*2+0*0+2*1+0*1+0*0+0*1 = 25")  
+![\|\|x\|\| = \sqrt{5^2+0^2+3^2+0^2+2^2+0^2+0^2+2^2+0^2+0^2} = 6.48](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%7C%7Cx%7C%7C%20%3D%20%5Csqrt%7B5%5E2%2B0%5E2%2B3%5E2%2B0%5E2%2B2%5E2%2B0%5E2%2B0%5E2%2B2%5E2%2B0%5E2%2B0%5E2%7D%20%3D%206.48 "||x|| = \sqrt{5^2+0^2+3^2+0^2+2^2+0^2+0^2+2^2+0^2+0^2} = 6.48")  
+![\|\|y\|\| = \sqrt{3^2+0^2+2^2+0^2+1^2+1^2+0^2+1^2+0^2+1^2} = 4.12](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%7C%7Cy%7C%7C%20%3D%20%5Csqrt%7B3%5E2%2B0%5E2%2B2%5E2%2B0%5E2%2B1%5E2%2B1%5E2%2B0%5E2%2B1%5E2%2B0%5E2%2B1%5E2%7D%20%3D%204.12 "||y|| = \sqrt{3^2+0^2+2^2+0^2+1^2+1^2+0^2+1^2+0^2+1^2} = 4.12")  
+![sim(x,y) = \frac{25}{6.48\*4.12} = 0.94](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;sim%28x%2Cy%29%20%3D%20%5Cfrac%7B25%7D%7B6.48%2A4.12%7D%20%3D%200.94 "sim(x,y) = \frac{25}{6.48*4.12} = 0.94")
 
 **Some matrix multiplication quirks to understand.**
 
@@ -450,7 +450,7 @@ Since the dimension of an vector is NULL it can act as a row vector or
 column vector.  
 In this case it acts as a 1x2 row vector and so can be multiplied by a
 2x2 matrix.  
-![a^\*\_{1\\times2}\*a\_{2\\times2}](https://latex.codecogs.com/png.latex?a%5E%2A_%7B1%5Ctimes2%7D%2Aa_%7B2%5Ctimes2%7D "a^*_{1\times2}*a_{2\times2}")
+![a^\*\_{1\times2}\*a\_{2\times2}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;a%5E%2A_%7B1%5Ctimes2%7D%2Aa_%7B2%5Ctimes2%7D "a^*_{1\times2}*a_{2\times2}")
 
 ``` r
 a[1,]%*%a
@@ -460,7 +460,7 @@ a[1,]%*%a
     ## [1,]    3    6
 
 Here it acts as 2x1 column vector and can multiply a.  
-![a\_{2\\times2}\*a^\*\_{2\\times1}](https://latex.codecogs.com/png.latex?a_%7B2%5Ctimes2%7D%2Aa%5E%2A_%7B2%5Ctimes1%7D "a_{2\times2}*a^*_{2\times1}")
+![a\_{2\times2}\*a^\*\_{2\times1}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;a_%7B2%5Ctimes2%7D%2Aa%5E%2A_%7B2%5Ctimes1%7D "a_{2\times2}*a^*_{2\times1}")
 
 ``` r
 a%*%a[1,]
@@ -514,7 +514,7 @@ Identical results
 tidy_word_vectors %>% nearest_neighbors2("today")
 ```
 
-    ## # A tibble: 14 x 2
+    ## # A tibble: 14 × 2
     ##    item1       value
     ##    <chr>       <dbl>
     ##  1 today   1        
@@ -536,7 +536,7 @@ tidy_word_vectors %>% nearest_neighbors2("today")
 tidy_word_vectors %>% nearest_neighbors("today")
 ```
 
-    ## # A tibble: 14 x 2
+    ## # A tibble: 14 × 2
     ##    item1       value
     ##    <chr>       <dbl>
     ##  1 today   1        
@@ -563,7 +563,7 @@ One common approach is to aggregate the word vectors of all the words
 that make up the document. We could sum all those word vectors of a
 document or average them or take the min/max across each dimension.
 
-We need a matrix of *document\_id*, *words* and the count of how many
+We need a matrix of *document_id*, *words* and the count of how many
 times that word appears in that document.
 
 Document-term(word) matrix
@@ -572,7 +572,7 @@ Document-term(word) matrix
 tidy_dt %>% head()
 ```
 
-    ## # A tibble: 6 x 2
+    ## # A tibble: 6 × 2
     ##      id word 
     ##   <dbl> <chr>
     ## 1     1 this 
@@ -594,7 +594,7 @@ Word embedding matrix
 tidy_word_vectors %>% head()
 ```
 
-    ## # A tibble: 6 x 3
+    ## # A tibble: 6 × 3
     ##   item1  dimension   value
     ##   <chr>      <int>   <dbl>
     ## 1 huh            1  0.428 
@@ -705,14 +705,14 @@ doc_matrix
 tidy_doc_matrix
 ```
 
-    ## # A tibble: 2 x 5
+    ## # A tibble: 2 × 5
     ##      id    d1    d2    d3    d4
     ##   <dbl> <dbl> <dbl> <dbl> <dbl>
     ## 1     1   0.2     1   0.5  0.02
     ## 2     2   1.3     9   1.9  1.14
 
-If you want *tidy\_doc\_matrix* in matrix format rather than a tibble,
-use `cast_sparse`.
+If you want *tidy_doc_matrix* in matrix format rather than a tibble, use
+`cast_sparse`.
 
 ``` r
 tidy_doc_matrix %>% 
@@ -762,14 +762,14 @@ dt_baked <- rec_spec %>% recipes::bake(new_data = NULL)
 dt_baked[, 1:6]
 ```
 
-    ## # A tibble: 4 x 6
-    ##      id w_embed_sum_d1 w_embed_sum_d2 w_embed_sum_d3 w_embed_sum_d4
-    ##   <dbl>          <dbl>          <dbl>          <dbl>          <dbl>
-    ## 1     1         1.12             1.64         -2.53          0.0525
-    ## 2     2        -0.0176           2.47         -0.459        -0.907 
-    ## 3     3        -0.0384           1.81         -1.48         -0.927 
-    ## 4     4         0.923            3.26         -1.86          0.371 
-    ## # ... with 1 more variable: w_embed_sum_d5 <dbl>
+    ## # A tibble: 4 × 6
+    ##      id wordembed_text_d1 wordembed_text_d2 wordembed_text_d3 wordembed_text_d4
+    ##   <dbl>             <dbl>             <dbl>             <dbl>             <dbl>
+    ## 1     1            1.12                1.64            -2.53             0.0525
+    ## 2     2           -0.0176              2.47            -0.459           -0.907 
+    ## 3     3           -0.0384              1.81            -1.48            -0.927 
+    ## 4     4            0.923               3.26            -1.86             0.371 
+    ## # … with 1 more variable: wordembed_text_d5 <dbl>
 
 **Manual steps**
 
@@ -813,10 +813,10 @@ doc_matrix[,1:5]
     ## 4  0.92253000 3.263501 -1.861858  0.370579 0.63708
     ## 2 -0.01758149 2.465690 -0.458556 -0.906757 2.60144
 
-> It is extremely important that the order of column in word\_matrix and
-> order of row in glove\_matrix match. If there is a mismatch you will
+> It is extremely important that the order of column in word_matrix and
+> order of row in glove_matrix match. If there is a mismatch you will
 > get incorrect result.  
-> In out case this is achieved by sorting dataframe by word/token before
+> In our case this is achieved by sorting dataframe by word/token before
 > casting to sparse matrix.
 
 **Another way of calculating document embedding.**  
@@ -835,7 +835,7 @@ glove6b %>% select(token, d1:d5) %>%
   map_df(sum)
 ```
 
-    ## # A tibble: 1 x 5
+    ## # A tibble: 1 × 5
     ##      d1    d2    d3     d4    d5
     ##   <dbl> <dbl> <dbl>  <dbl> <dbl>
     ## 1  1.12  1.64 -2.53 0.0525  3.89

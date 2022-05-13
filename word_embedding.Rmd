@@ -132,7 +132,7 @@ There are 5 total tokens, out of that "ac" shows up on two tokens. "a shows up o
 $I(a,c) = log(\frac{\frac{2}{5}}{\frac{3}{5}*\frac{2}{5}}) =$ `r log((2/5)/((3/5)*(2/5)))`    
 
 There are total 5 tokens. "ab" appears in 1 token. "a" appears in 3 tokens and "b" appears in 3 tokens.        
-$I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}*\frac{2}{5}}) =$ `r log((1/5)/((3/5)*(3/5)))`    
+$I(a,c) = log(\frac{\frac{1}{5}}{\frac{3}{5}*\frac{3}{5}}) =$ `r log((1/5)/((3/5)*(3/5)))`    
 Both of these results match with what we got from `pairwise_pmi()`.
 
 ### Represent words as numeric vectors    
@@ -413,7 +413,7 @@ doc_matrix[,1:5]
 ```
 
 > It is extremely important that the order of column in word_matrix and order of row in glove_matrix match. If there is a mismatch you will get incorrect result.    
-> In out case this is achieved by sorting dataframe by word/token before casting to sparse matrix.
+> In our case this is achieved by sorting dataframe by word/token before casting to sparse matrix.
 
 **Another way of calculating document embedding.**    
 Assuming each word only appears once in a document, we can simply filter the gove word-vector dataset to the desired tokens and sum the values across each dimension.
