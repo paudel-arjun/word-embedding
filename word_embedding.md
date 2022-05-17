@@ -238,6 +238,23 @@ tidy_word_vectors <- tidy_pmi %>%
   )
 ```
 
+``` r
+tidy_word_vectors %>% sample_n(10) %>% knitr::kable()
+```
+
+| item1  | dimension |      value |
+|:-------|----------:|-----------:|
+| sure   |         4 | -0.4700583 |
+| summer |         5 | -0.0072141 |
+| who    |         4 | -0.0653013 |
+| hot    |         1 |  0.3637759 |
+| sure   |         5 |  0.5424743 |
+| month  |         1 |  0.4278304 |
+| month  |         3 | -0.6603296 |
+| good   |         5 |  0.0560611 |
+| sure   |         1 | -0.0156122 |
+| summer |         1 |  0.4969067 |
+
 We can try to recreate this using `irlba()` from **irlba** library
 
 ``` r
